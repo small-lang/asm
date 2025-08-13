@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
 import argparse
+import struct
+import itertools
 import sys
 from dataclasses import dataclass
+from dataclasses import field
 
 
 
@@ -66,14 +69,89 @@ def preprocess(insts):
 
     return map
 
+@dataclass
+class output:
+    buffer : bytearray = field(default_factory=lambda: bytearray())
 
+    def __call__(self, code, arg = 0):
+        inst = struct.pack('>HH', code, arg)
+        self.buffer.extend(inst)
+
+    def emit(self, path):
+        with open(path, "wb") as f:
+            f.write(self.buffer)
+
+
+@dataclass
+class config:
+    code : int | None
+    label : bool = False #argument needs to be label
+    expr  : bool = False #argument is expression (either variable or immediate)
+    only  : bool = False #not argument to be provided
 
 
 def assemble(path):
     insts = parse(path)
     labels = preprocess(insts)
 
-    print(labels)
+    mapper = {
+        "hlt": config( 0, only  = True),
+        "ldi": config( 1, expr  = True),
+        "shr": config( 2, expr  = True),
+        "shl": config( 3, expr  = True),
+        "nad": config( 4, expr  = True),
+        "jmp": config( 5, label = True),
+        "jmz": config( 6, label = True),
+        "cal": config( 7, label = True),
+        "ret": config( 8, only  = True),
+        "lda": config( 9, expr  = True),
+        "sta": config(10, expr  = True),
+        "pha": config(11, only  = True),
+        "pla": config(12, only  = True),
+        "out": config(13, only  = True),
+        "inp": config(14, only  = True),
+        "res": config(15, only  = True),
+
+        "lab": config(None)
+    }
+
+    buffer = output()
+
+    vars = {}
+    var_alloc = itertools.count(0)
+
+    for inst in insts:
+        cfg = mapper[inst.name()]
+
+        if cfg.only: 
+            buffer(cfg.code, 0)
+            if inst._arg is not None:
+                error(inst.index, inst.path, f"Instruction {inst.name()} should not have argument")
+
+        if cfg.expr:
+            arg = inst.arg()
+
+            #immediate
+            if arg.isdigit():
+                buffer(cfg.code, arg)
+
+            #variable
+            else:
+                if arg not in vars:
+                    vars[arg] = next(var_alloc)
+
+                buffer(cfg.code, vars[arg])
+
+        if cfg.label:
+            if inst.arg() not in labels:
+                error(inst.index, inst.path, f"Undeclared label {inst.arg()}")
+
+            buffer(cfg.code, labels[inst.arg()])
+
+
+
+
+    return buffer
 
     
 
@@ -88,11 +166,11 @@ def main():
     ) 
 
     parser.add_argument('path')
-    parser.add_argument('-o', '--output', default='build')
+    parser.add_argument('-o', '--output', dest="out", default='build')
 
     args = parser.parse_args()
 
-    assemble(args.path)
+    assemble(args.path).emit(args.out)
 
 if __name__ == '__main__':
     main()
