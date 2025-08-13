@@ -1,0 +1,36 @@
+
+
+
+lab swap
+    pla
+    sta retaddr
+
+    pla
+    sta x
+    pla
+    sta y
+    lda x
+    pha
+    lda y
+    pha
+
+    lda retaddr
+    pha
+    ret
+
+
+
+
+lab not
+    cal swap
+    pla
+
+    sta x
+    nad x
+
+    pha
+    cal swap
+    ret
+
+
+
