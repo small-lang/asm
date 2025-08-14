@@ -1,0 +1,49 @@
+
+use 'lib/stack.small'
+use 'lib/arith.small'
+
+
+" a b => prod
+lab math::mul
+    cal stack::swap
+    pla
+    sta b
+    cal stack::swap
+    pla
+    sta a
+
+    ldi 0
+    sta prod
+
+
+    lab mul::loop
+        "prod = prod + b
+        lda b
+        pha
+        lda prod
+        pha
+        cal arith::add
+        pla
+        sta prod
+
+        "a = a - 1
+        lda a
+        pha
+        ldi 1
+        pha
+        cal arith::sub
+        pla
+        sta a
+
+        jmz mul::done
+        jmp mul::loop
+    lab mul::done
+
+
+    lda prod
+    pha
+    cal stack::swap
+    ret
+
+
+
