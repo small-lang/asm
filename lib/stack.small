@@ -1,0 +1,45 @@
+
+
+lab stack::swap
+    pla
+    sta stack::swap:addr
+
+    "lift
+    pla
+    sta stack::swap:a
+    pla
+    sta stack::swap:b
+
+    "lower
+    lda stack::swap:a
+    pha
+    lda stack::swap:b
+    pha
+
+    lda stack::swap:addr
+    pha
+    ret
+
+
+lab stack::dup
+    pla
+    sta stack::dup:addr
+
+    pla
+    pha
+    pha
+
+    lda stack::dup:addr
+    pha
+    ret
+
+
+lab stack::drop
+    cal stack::swap
+
+    pla
+
+    cal stack::swap
+    ret
+
+    
