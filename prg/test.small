@@ -1,47 +1,18 @@
 
 jmp main
 use 'lib/stack.small'
-
-
-lab not
-    cal stack::swap
-    pla
-
-    sta x
-    nad x
-
-    pha
-    cal stack::swap
-    ret
-
-
-lab and
-    cal stack::swap
-    pla
-    sta b
-    cal stack::swap
-    pla
-    sta a
-
-    lda a
-    nad b
-    pha
-    cal not
-
-    cal stack::swap
-    ret
-
+use 'lib/bool.small'
 
 
 
 
 lab main
 
-    ldi 64
+    ldi 5
     pha
-    ldi 1
+    ldi 3
     pha
-    cal and
+    cal bool::xor
     pla
     out
 
