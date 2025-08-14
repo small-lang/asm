@@ -40,8 +40,15 @@ class inst:
 
 
 
-
+imported = set()
 def parse(path):
+    #make sure library only gets imported once
+    if path in imported:
+        return []
+
+    imported.add(path)
+
+
     with open(path) as f:
         lines = f.readlines()
 
