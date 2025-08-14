@@ -2,17 +2,18 @@
 jmp main
 use 'lib/stack.small'
 use 'lib/bool.small'
+use 'lib/arith.small'
 
 
 
 
 lab main
 
-    ldi 5
+    ldi 25
     pha
-    ldi 3
+    ldi 75
     pha
-    cal bool::xor
+    cal arith::add
     pla
     out
 
