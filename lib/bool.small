@@ -27,7 +27,7 @@ lab bool::and
     lda bool::and:a
     nad bool::and:b
     pha
-    cal not
+    cal bool::not
 
     cal stack::swap
     ret
@@ -45,6 +45,7 @@ lab bool::or
 
     lda bool::or:a
     nad bool::or:b
+    pha
 
     cal stack::swap
     ret
