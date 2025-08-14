@@ -1,0 +1,80 @@
+
+use 'lib/stack.small'
+
+
+" not x = nand x x
+lab bool::not
+    cal stack::swap
+    pla
+
+    sta bool::not:x
+    nad bool::not:x
+
+    pha
+    cal stack::swap
+    ret
+
+
+" and a b = not (nand a b)
+lab bool::and
+    cal stack::swap
+    pla
+    sta bool::and:a
+    cal stack::swap
+    pla
+    sta bool::and:b
+
+    lda bool::and:a
+    nad bool::and:b
+    pha
+    cal not
+
+    cal stack::swap
+    ret
+
+" or a b = nand (not a) (not b)
+lab bool::or
+    cal stack::swap
+    cal bool::not
+    pla
+    sta bool::or:a
+    cal stack::swap
+    cal bool::not
+    pla
+    sta bool::or:b
+
+    lda bool::or:a
+    nad bool::or:b
+
+    cal stack::swap
+    ret
+
+" xor a b = and (not (and a b)) (or a b)
+"         = and (nand a b) (or a b)
+lab bool::xor
+    cal stack::swap
+    pla
+    sta bool::xor:a
+    cal stack::swap
+    pla
+    sta bool::xor:b
+
+    " nand a b
+    lda bool::xor:a
+    nad bool::xor:b
+    pha
+
+    " or a b
+    lda bool::xor:a
+    pha
+    lda bool::xor:b
+    pha
+    cal bool::or
+
+    " and
+    cal bool::and
+
+    cal stack::swap
+    ret
+
+
