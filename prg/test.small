@@ -8,13 +8,12 @@ use 'lib/arith.small'
 
 
 lab main
-
-    ldi 25
+    ldi 55
     pha
-    ldi 75
+    ldi 89
     pha
     cal arith::add
     pla
-    out
+    res
 
     hlt
