@@ -1,0 +1,155 @@
+
+use 'lib/stack.small'
+use 'lib/bool.small'
+
+
+" a b => sum
+lab arith::add
+    "function header
+    cal stack::swap
+    pla
+    sta arith::add:b
+    cal stack::swap
+    pla
+    sta arith::add:a
+
+    "or = a | b
+    lda arith::add:a
+    pha
+    lda arith::add:b
+    pha
+    cal bool::or
+    pla
+    sta arith::add:or
+
+    "and = a & b
+    lda arith::add:a
+    pha
+    lda arith::add:b
+    pha
+    cal bool::and
+    pla
+    sta arith::add:and
+
+    "sum = 0
+    ldi 0
+    sta arith::add:sum
+    "carry = 0
+    ldi 0
+    sta arith::add:carry
+
+    "repeat(16) do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+    cal arith::add::do
+
+    "return sum
+    lda arith::add:sum
+    pha
+    cal stack::swap
+    ret
+
+
+    lab arith::add::do
+        "sum >>= 1
+        "or-bit = or & 1
+        "carry-bit = (and & 1) | carry
+        "if (or-bit ^ carry-bit) sum |= (1 << 15)
+        "carry = or-bit & carry-bit
+        "or >>= 1
+        "and >>= 1
+
+        "sum >>= 1
+        lda arith::add:sum
+        shr
+        sta arith::add:sum
+
+        "or-bit = or & 1
+        lda arith::add:or
+        pha
+        ldi 1
+        pha
+        cal bool::and
+        pla
+        sta arith::add:or-bit
+
+        "carry-bit = (and & 1) | carry
+        lda arith::add:and
+        pha
+        ldi 1
+        pha
+        cal bool::and
+        lda arith::add:carry
+        pha
+        cal bool::or
+        pla
+        sta arith::add:carry-bit
+
+        "if (or-bit ^ carry-bit) sum |= (1 << 15)
+        lda arith::add:or-bit
+        pha
+        lda arith::add:carry-bit
+        pha
+        cal bool::xor
+        pla
+        jmz skip-set-bit
+            ldi 32768
+            pha
+            lda arith::add:sum
+            pha
+            cal bool::or
+            pla
+            sta arith::add:sum
+        lab skip-set-bit
+
+
+        "carry = or-bit & carry-bit
+        lda arith::add:or-bit
+        pha
+        lda arith::add:carry-bit
+        pha
+        cal bool::and
+        pla
+        sta arith::add:carry
+
+        "or >>= 1
+        lda arith::add:or
+        shr
+        sta arith::add:or
+
+        "and >>= 1
+        lda arith::add:and
+        shr
+        sta arith::add:and
+
+        ret
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
