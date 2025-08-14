@@ -117,8 +117,8 @@ def assemble(path):
     mapper = {
         "hlt": config( 0, only  = True),
         "ldi": config( 1, expr  = True),
-        "shr": config( 2, expr  = True),
-        "shl": config( 3, expr  = True),
+        "shr": config( 2, only  = True),
+        "shl": config( 3, only  = True),
         "nad": config( 4, expr  = True),
         "jmp": config( 5, label = True),
         "jmz": config( 6, label = True),
