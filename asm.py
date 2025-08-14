@@ -74,7 +74,7 @@ class output:
     buffer : bytearray = field(default_factory=lambda: bytearray())
 
     def __call__(self, code, arg = 0):
-        inst = struct.pack('>HH', code, arg)
+        inst = struct.pack('<HH', code, arg)
         self.buffer.extend(inst)
 
     def emit(self, path):
@@ -93,6 +93,8 @@ class config:
 def assemble(path):
     insts = parse(path)
     labels = preprocess(insts)
+
+    print(labels)
 
     mapper = {
         "hlt": config( 0, only  = True),
@@ -133,7 +135,7 @@ def assemble(path):
 
             #immediate
             if arg.isdigit():
-                buffer(cfg.code, arg)
+                buffer(cfg.code, int(arg))
 
             #variable
             else:
@@ -149,7 +151,7 @@ def assemble(path):
             buffer(cfg.code, labels[inst.arg()])
 
 
-
+    print(vars)
 
     return buffer
 
