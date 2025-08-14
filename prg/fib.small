@@ -1,0 +1,53 @@
+
+jmp main
+use 'lib/arith.small'
+
+
+
+
+
+lab main
+    ldi 0
+    sta a
+    sta c
+
+    ldi 1
+    sta b
+
+
+    lab loop
+        "c = a + b
+        lda a
+        pha
+        lda b
+        pha
+        cal arith::add
+        pla
+        sta c
+
+        "a = b
+        lda b
+        sta a
+
+        "b = c
+        lda c
+        sta b
+
+        res
+
+        pha
+        ldi 233
+        pha
+        cal arith::sub
+        pla
+
+        jmz done
+        jmp loop
+    lab done
+
+    hlt
+
+
+
+
+

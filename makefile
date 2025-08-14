@@ -1,9 +1,9 @@
-
+TARGET = prg/fib.small
 
 run: compile
 	./vm build
 
 compile:
-	./asm.py prg/test.small
+	./asm.py $(TARGET)
 
 
