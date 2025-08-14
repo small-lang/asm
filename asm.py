@@ -22,8 +22,7 @@ class inst:
     path  : str
 
     @classmethod
-    def parse(cls, line, src_index, src_path):
-        comps = list(filter(lambda x: len(x) > 0, line.split(' ')))
+    def parse(cls, comps, src_index, src_path):
         base_args = (comps + [None])[:2]
         return cls(*base_args, src_index, src_path)
 
@@ -42,7 +41,6 @@ class inst:
 
 
 
-
 def parse(path):
     with open(path) as f:
         lines = f.readlines()
@@ -50,10 +48,23 @@ def parse(path):
     insts = []
     for index, line_raw in enumerate(lines):
         line = line_raw.strip('\n\t ')
+        #emtpy line
         if len(line) == 0:
             continue
-        
-        insts.append(inst.parse(line, index, path))
+
+        #comment
+        if line[0] == '"':
+            continue
+
+        comps = list(filter(lambda x: len(x) > 0, line.split(' ')))
+        if comps[0] == 'use':
+            if len(comps) < 2:
+                error(index, path, "Use directive without path")
+
+            insts += parse(comps[1].strip("'"))
+
+        else:
+            insts.append(inst.parse(comps, index, path))
     
     return insts
 
@@ -87,7 +98,7 @@ class config:
     code : int | None
     label : bool = False #argument needs to be label
     expr  : bool = False #argument is expression (either variable or immediate)
-    only  : bool = False #not argument to be provided
+    only  : bool = False #no argument to be provided
 
 
 def assemble(path):
