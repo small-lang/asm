@@ -1,42 +1,25 @@
 
 jmp main
-
-
-lab swap
-    pla
-    sta retaddr
-
-    pla
-    sta x
-    pla
-    sta y
-    lda x
-    pha
-    lda y
-    pha
-
-    lda retaddr
-    pha
-    ret
+use 'lib/stack.small'
 
 
 lab not
-    cal swap
+    cal stack::swap
     pla
 
     sta x
     nad x
 
     pha
-    cal swap
+    cal stack::swap
     ret
 
 
 lab and
-    cal swap
+    cal stack::swap
     pla
     sta b
-    cal swap
+    cal stack::swap
     pla
     sta a
 
@@ -45,7 +28,7 @@ lab and
     pha
     cal not
 
-    cal swap
+    cal stack::swap
     ret
 
 
