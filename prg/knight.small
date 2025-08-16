@@ -1,0 +1,55 @@
+
+"init
+ldi 1
+sta state
+sta dir
+
+lab mainloop
+
+    "display
+    lda state
+    out
+
+    "advance
+    lda dir
+    jmz left
+    jmp right
+
+
+    lab left
+        lda state
+        shl
+        sta state
+        jmz left-restart
+        jmp mainloop
+
+    lab right
+        lda state
+        shr
+        sta state
+        jmz right-restart
+        jmp mainloop
+
+    lab left-restart
+        ldi 1024
+        sta state
+
+        ldi 1
+        sta dir
+        
+        jmp mainloop
+
+    lab right-restart
+        ldi 1
+        sta state
+
+        ldi 0
+        sta dir
+        
+        jmp mainloop
+
+
+
+jmp mainloop
+
+
